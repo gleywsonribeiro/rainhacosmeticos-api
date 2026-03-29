@@ -30,6 +30,11 @@ public class ClienteController {
         return clienteService.buscarPorId(id);
     }
 
+    @GetMapping("/buscar")
+    public List<ClienteResponse> buscarPorNome(@RequestParam("nome") String nome) {
+        return clienteService.buscarPorNome(nome);
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ClienteResponse criar(@RequestBody @Valid ClienteRequest request) {

@@ -35,6 +35,16 @@ public class ClienteService {
         return toResponse(buscarEntidade(id));
     }
 
+    public List<ClienteResponse> buscarPorNome(String nome) {
+        String filtro = trimToNull(nome);
+        if (filtro == null) {
+            return List.of();
+        }
+        return clienteRepository.findByNomeContainingIgnoreCase(filtro).stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
     @Transactional
     public ClienteResponse criar(ClienteRequest request) {
         Cliente cliente = Cliente.builder()

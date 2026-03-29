@@ -23,11 +23,12 @@ public class Cliente {
     @Column(nullable = false)
     private String nome;
 
-    private String apelido;
-
     private String email;
 
     private String whatsapp;
 
     private LocalDate dataNascimento;
+
+    @Embedded
+    private Endereco endereco;
 }

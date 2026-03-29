@@ -6,9 +6,9 @@ import java.time.LocalDate;
 
 public record ClienteRequest(
         @NotBlank String nome,
-        String apelido,
         String email,
         String whatsapp,
-        LocalDate dataNascimento
+        LocalDate dataNascimento,
+        EnderecoDto endereco
 ) {
 }

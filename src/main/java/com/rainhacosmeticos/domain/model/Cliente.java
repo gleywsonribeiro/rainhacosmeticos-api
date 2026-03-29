@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -23,4 +24,10 @@ public class Cliente {
     private String nome;
 
     private String apelido;
+
+    private String email;
+
+    private String whatsapp;
+
+    private LocalDate dataNascimento;
 }

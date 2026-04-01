@@ -21,4 +21,15 @@ public class Fornecedor {
 
     @Column(nullable = false)
     private String nome;
+
+    private String ie;
+
+    private String cnpj;
+
+    private String email;
+
+    private String fone;
+
+    @Embedded
+    private Endereco endereco;
 }

@@ -1,11 +1,13 @@
 package com.rainhacosmeticos.service;
 
+import com.rainhacosmeticos.domain.model.Endereco;
 import com.rainhacosmeticos.domain.model.Fornecedor;
 import com.rainhacosmeticos.exception.ExclusaoNaoPermitidaException;
 import com.rainhacosmeticos.exception.RecursoNaoEncontradoException;
 import com.rainhacosmeticos.repository.FornecedorRepository;
 import com.rainhacosmeticos.repository.NotaDeCompraRepository;
 import com.rainhacosmeticos.repository.PrecificacaoRepository;
+import com.rainhacosmeticos.web.dto.FornecedorEnderecoDto;
 import com.rainhacosmeticos.web.dto.FornecedorRequest;
 import com.rainhacosmeticos.web.dto.FornecedorResponse;
 import org.springframework.stereotype.Service;
@@ -44,6 +46,11 @@ public class FornecedorService {
     public FornecedorResponse criar(FornecedorRequest request) {
         Fornecedor fornecedor = Fornecedor.builder()
                 .nome(request.nome().trim())
+                .ie(trimToNull(request.ie()))
+                .cnpj(trimToNull(request.cnpj()))
+                .email(trimToNull(request.email()))
+                .fone(trimToNull(request.fone()))
+                .endereco(toEndereco(request.endereco()))
                 .build();
         return toResponse(fornecedorRepository.save(fornecedor));
     }
@@ -52,6 +59,11 @@ public class FornecedorService {
     public FornecedorResponse atualizar(UUID id, FornecedorRequest request) {
         Fornecedor fornecedor = buscarEntidade(id);
         fornecedor.setNome(request.nome().trim());
+        fornecedor.setIe(trimToNull(request.ie()));
+        fornecedor.setCnpj(trimToNull(request.cnpj()));
+        fornecedor.setEmail(trimToNull(request.email()));
+        fornecedor.setFone(trimToNull(request.fone()));
+        fornecedor.setEndereco(toEndereco(request.endereco()));
         return toResponse(fornecedorRepository.save(fornecedor));
     }
 
@@ -80,6 +92,50 @@ public class FornecedorService {
     }
 
     private FornecedorResponse toResponse(Fornecedor f) {
-        return new FornecedorResponse(f.getId(), f.getNome());
+        return new FornecedorResponse(
+                f.getId(),
+                f.getNome(),
+                f.getIe(),
+                f.getCnpj(),
+                f.getEmail(),
+                f.getFone(),
+                toFornecedorEnderecoDto(f.getEndereco()));
+    }
+
+    private static Endereco toEndereco(FornecedorEnderecoDto dto) {
+        if (dto == null) {
+            return null;
+        }
+        return Endereco.builder()
+                .cep(trimToNull(dto.cep()))
+                .logradouro(trimToNull(dto.logradouro()))
+                .numero(trimToNull(dto.numero()))
+                .complemento(trimToNull(dto.complemento()))
+                .bairro(trimToNull(dto.bairro()))
+                .cidade(trimToNull(dto.cidade()))
+                .estado(trimToNull(dto.uf()))
+                .build();
+    }
+
+    private static FornecedorEnderecoDto toFornecedorEnderecoDto(Endereco e) {
+        if (e == null) {
+            return null;
+        }
+        return new FornecedorEnderecoDto(
+                e.getLogradouro(),
+                e.getNumero(),
+                e.getComplemento(),
+                e.getBairro(),
+                e.getCidade(),
+                e.getEstado(),
+                e.getCep());
+    }
+
+    private static String trimToNull(String s) {
+        if (s == null) {
+            return null;
+        }
+        String t = s.trim();
+        return t.isEmpty() ? null : t;
     }
 }

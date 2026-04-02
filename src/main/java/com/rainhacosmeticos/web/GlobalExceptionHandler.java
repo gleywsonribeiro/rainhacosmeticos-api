@@ -1,7 +1,9 @@
 package com.rainhacosmeticos.web;
 
 import com.rainhacosmeticos.exception.ExclusaoNaoPermitidaException;
+import com.rainhacosmeticos.exception.RegistroDuplicadoException;
 import com.rainhacosmeticos.exception.RecursoNaoEncontradoException;
+import com.rainhacosmeticos.exception.RegraNegocioException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -22,6 +24,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ExclusaoNaoPermitidaException.class)
     public ResponseEntity<Map<String, String>> handleConflict(ExclusaoNaoPermitidaException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", ex.getMessage()));
+    }
+
+    @ExceptionHandler(RegistroDuplicadoException.class)
+    public ResponseEntity<Map<String, String>> handleDuplicate(RegistroDuplicadoException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", ex.getMessage()));
+    }
+
+    @ExceptionHandler(RegraNegocioException.class)
+    public ResponseEntity<Map<String, String>> handleBusinessRule(RegraNegocioException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", ex.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

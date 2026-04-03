@@ -14,7 +14,7 @@ public record ProdutoResponse(
         @JsonProperty("preco_custo") BigDecimal precoCusto,
         @JsonProperty("margem_lucro") BigDecimal margemLucro,
         @JsonProperty("ativo") boolean ativo,
-        @JsonProperty("categoria_id") Long categoriaId,
-        @JsonProperty("unidade_id") Long unidadeId
+        @JsonProperty("categoria_id") UUID categoriaId,
+        @JsonProperty("unidade_id") UUID unidadeId
 ) {
 }

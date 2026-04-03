@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true)
@@ -25,7 +26,7 @@ public class UnidadeService {
         return unidadeRepository.findAll().stream().map(this::toResponse).toList();
     }
 
-    public UnidadeResponse buscarPorId(Long id) {
+    public UnidadeResponse buscarPorId(UUID id) {
         return toResponse(buscarEntidade(id));
     }
 
@@ -39,20 +40,20 @@ public class UnidadeService {
     }
 
     @Transactional
-    public UnidadeResponse ativar(Long id) {
+    public UnidadeResponse ativar(UUID id) {
         Unidade unidade = buscarEntidade(id);
         unidade.setAtivo(true);
         return toResponse(unidadeRepository.save(unidade));
     }
 
     @Transactional
-    public UnidadeResponse desativar(Long id) {
+    public UnidadeResponse desativar(UUID id) {
         Unidade unidade = buscarEntidade(id);
         unidade.setAtivo(false);
         return toResponse(unidadeRepository.save(unidade));
     }
 
-    public Unidade buscarEntidadeAtiva(Long id) {
+    public Unidade buscarEntidadeAtiva(UUID id) {
         Unidade u = buscarEntidade(id);
         if (!u.isAtivo()) {
             throw new RegraNegocioException("Unidade inativa.");
@@ -60,7 +61,7 @@ public class UnidadeService {
         return u;
     }
 
-    public Unidade buscarEntidade(Long id) {
+    public Unidade buscarEntidade(UUID id) {
         return unidadeRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Unidade não encontrada."));
     }

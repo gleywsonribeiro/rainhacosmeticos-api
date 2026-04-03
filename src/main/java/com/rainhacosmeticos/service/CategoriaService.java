@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true)
@@ -25,7 +26,7 @@ public class CategoriaService {
         return categoriaRepository.findAll().stream().map(this::toResponse).toList();
     }
 
-    public CategoriaResponse buscarPorId(Long id) {
+    public CategoriaResponse buscarPorId(UUID id) {
         return toResponse(buscarEntidade(id));
     }
 
@@ -39,20 +40,20 @@ public class CategoriaService {
     }
 
     @Transactional
-    public CategoriaResponse ativar(Long id) {
+    public CategoriaResponse ativar(UUID id) {
         Categoria categoria = buscarEntidade(id);
         categoria.setAtivo(true);
         return toResponse(categoriaRepository.save(categoria));
     }
 
     @Transactional
-    public CategoriaResponse desativar(Long id) {
+    public CategoriaResponse desativar(UUID id) {
         Categoria categoria = buscarEntidade(id);
         categoria.setAtivo(false);
         return toResponse(categoriaRepository.save(categoria));
     }
 
-    public Categoria buscarEntidadeAtiva(Long id) {
+    public Categoria buscarEntidadeAtiva(UUID id) {
         Categoria c = buscarEntidade(id);
         if (!c.isAtivo()) {
             throw new RegraNegocioException("Categoria inativa.");
@@ -60,7 +61,7 @@ public class CategoriaService {
         return c;
     }
 
-    public Categoria buscarEntidade(Long id) {
+    public Categoria buscarEntidade(UUID id) {
         return categoriaRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Categoria não encontrada."));
     }

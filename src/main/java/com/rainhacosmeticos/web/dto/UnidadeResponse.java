@@ -1,4 +1,6 @@
 package com.rainhacosmeticos.web.dto;
 
-public record UnidadeResponse(Long id, String nome, boolean ativo) {
+import java.util.UUID;
+
+public record UnidadeResponse(UUID id, String nome, boolean ativo) {
 }

@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/unidades")
@@ -25,7 +26,7 @@ public class UnidadeController {
     }
 
     @GetMapping("/{id}")
-    public UnidadeResponse buscar(@PathVariable Long id) {
+    public UnidadeResponse buscar(@PathVariable UUID id) {
         return unidadeService.buscarPorId(id);
     }
 
@@ -36,12 +37,12 @@ public class UnidadeController {
     }
 
     @PatchMapping("/{id}/ativar")
-    public UnidadeResponse ativar(@PathVariable Long id) {
+    public UnidadeResponse ativar(@PathVariable UUID id) {
         return unidadeService.ativar(id);
     }
 
     @PatchMapping("/{id}/desativar")
-    public UnidadeResponse desativar(@PathVariable Long id) {
+    public UnidadeResponse desativar(@PathVariable UUID id) {
         return unidadeService.desativar(id);
     }
 }

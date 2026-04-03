@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/categorias")
@@ -25,7 +26,7 @@ public class CategoriaController {
     }
 
     @GetMapping("/{id}")
-    public CategoriaResponse buscar(@PathVariable Long id) {
+    public CategoriaResponse buscar(@PathVariable UUID id) {
         return categoriaService.buscarPorId(id);
     }
 
@@ -36,12 +37,12 @@ public class CategoriaController {
     }
 
     @PatchMapping("/{id}/ativar")
-    public CategoriaResponse ativar(@PathVariable Long id) {
+    public CategoriaResponse ativar(@PathVariable UUID id) {
         return categoriaService.ativar(id);
     }
 
     @PatchMapping("/{id}/desativar")
-    public CategoriaResponse desativar(@PathVariable Long id) {
+    public CategoriaResponse desativar(@PathVariable UUID id) {
         return categoriaService.desativar(id);
     }
 }

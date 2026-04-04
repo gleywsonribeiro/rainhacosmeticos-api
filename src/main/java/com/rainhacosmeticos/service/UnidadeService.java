@@ -34,6 +34,7 @@ public class UnidadeService {
     public UnidadeResponse criar(UnidadeCreateRequest request) {
         Unidade unidade = Unidade.builder()
                 .nome(request.nome().trim())
+                .sigla(request.sigla().trim().toUpperCase())
                 .ativo(true)
                 .build();
         return toResponse(unidadeRepository.save(unidade));
@@ -67,6 +68,6 @@ public class UnidadeService {
     }
 
     private UnidadeResponse toResponse(Unidade u) {
-        return new UnidadeResponse(u.getId(), u.getNome(), u.isAtivo());
+        return new UnidadeResponse(u.getId(), u.getNome(), u.getSigla(), u.isAtivo());
     }
 }

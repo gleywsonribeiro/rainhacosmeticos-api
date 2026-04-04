@@ -23,6 +23,9 @@ public class Unidade {
     @Column(nullable = false)
     private String nome;
 
+    @Column(nullable = false, length = 5)
+    private String sigla;
+
     @Column(nullable = false)
     @Builder.Default
     private boolean ativo = true;

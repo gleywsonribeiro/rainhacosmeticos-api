@@ -4,8 +4,10 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/${DB_NAME:rainhacosmeticos}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
     username: ${DB_USER:root}
-    password: ${DB_PASSWORD:}
+    password: ${DB_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
+    database: mysql
     hibernate:
       ddl-auto: update
     show-sql: true

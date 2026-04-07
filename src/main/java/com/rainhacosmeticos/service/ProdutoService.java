@@ -48,9 +48,7 @@ public class ProdutoService {
                 .nome(request.nome().trim())
                 .descricao(trimToNull(request.descricao()))
                 .ean(ean)
-                .preco(request.preco())
-                .precoCusto(request.precoCusto())
-                .margemLucro(request.margemLucro())
+                // preco inicia em ZERO; será atualizado ao processar a primeira Nota de Compra
                 .ativo(ativo)
                 .categoria(categoriaService.buscarEntidadeAtiva(request.categoriaId()))
                 .unidade(unidadeService.buscarEntidadeAtiva(request.unidadeId()))
@@ -68,9 +66,6 @@ public class ProdutoService {
         produto.setNome(request.nome().trim());
         produto.setDescricao(trimToNull(request.descricao()));
         produto.setEan(ean);
-        produto.setPreco(request.preco());
-        produto.setPrecoCusto(request.precoCusto());
-        produto.setMargemLucro(request.margemLucro());
         if (request.ativo() != null) {
             produto.setAtivo(request.ativo());
         }
@@ -106,8 +101,6 @@ public class ProdutoService {
                 p.getDescricao(),
                 p.getEan(),
                 p.getPreco(),
-                p.getPrecoCusto(),
-                p.getMargemLucro(),
                 p.isAtivo(),
                 p.getCategoria().getId(),
                 p.getUnidade().getId());

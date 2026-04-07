@@ -29,14 +29,13 @@ public class Produto {
     @Column(unique = true)
     private String ean;
 
+    /**
+     * Preço de venda atual. Atualizado automaticamente pelo PrecificacaoService
+     * sempre que uma nova Nota de Compra é processada.
+     */
     @Column(nullable = false)
-    private BigDecimal preco;
-
-    @Column(name = "preco_custo", nullable = false)
-    private BigDecimal precoCusto;
-
-    @Column(name = "margem_lucro", nullable = false)
-    private BigDecimal margemLucro;
+    @Builder.Default
+    private BigDecimal preco = BigDecimal.ZERO;
 
     @Column(nullable = false)
     @Builder.Default

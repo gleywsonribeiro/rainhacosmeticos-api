@@ -31,6 +31,35 @@ public class ItemNotaDeCompra {
     @Column(nullable = false)
     private Integer quantidade;
 
+    /** Preço pago por unidade ao fornecedor nesta NF. */
     @Column(nullable = false)
     private BigDecimal custoUnitario;
+
+    /**
+     * Fator de margem de lucro para este produto.
+     * Exemplo: 0.40 = 40% de margem.
+     */
+    @Column(nullable = false)
+    private BigDecimal multiplicadorMargem;
+
+    /**
+     * Taxa adicional para pagamento em cartão.
+     * Exemplo: 0.10 = 10%.
+     */
+    @Column(nullable = false)
+    @Builder.Default
+    private BigDecimal taxaCartao = BigDecimal.valueOf(0.10);
+
+    @Builder.Default
+    private BigDecimal custoEmbalagem = BigDecimal.ZERO;
+
+    @Builder.Default
+    private BigDecimal custoBrinde = BigDecimal.ZERO;
+
+    @Builder.Default
+    private BigDecimal custoPapelaria = BigDecimal.ZERO;
+
+    @Builder.Default
+    private BigDecimal outrosCustos = BigDecimal.ZERO;
 }
+

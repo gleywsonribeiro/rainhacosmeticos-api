@@ -32,6 +32,7 @@ public class Precificacao {
     @Column(nullable = false)
     private LocalDate dataReferencia;
 
+    /** Custo unitário do produto (da Nota de Compra). */
     @Column(nullable = false)
     private BigDecimal custo;
 
@@ -47,8 +48,22 @@ public class Precificacao {
     @Builder.Default
     private BigDecimal outrosCustos = BigDecimal.ZERO;
 
+    /**
+     * Fator multiplicador da margem de lucro.
+     * Exemplo: 0.40 representa 40% de margem.
+     * precoSugerido = totalCusto * (1 + multiplicadorMargem)
+     */
     @Column(nullable = false)
     private BigDecimal multiplicadorMargem;
+
+    /**
+     * Taxa adicional para pagamento em cartão.
+     * Exemplo: 0.10 representa 10% sobre o precoSugerido.
+     * precoCartao = precoSugerido * (1 + taxaCartao)
+     */
+    @Column(nullable = false)
+    @Builder.Default
+    private BigDecimal taxaCartao = BigDecimal.valueOf(0.10);
 
     @Column(nullable = false)
     private BigDecimal precoSugerido;
@@ -69,12 +84,10 @@ public class Precificacao {
     @PreUpdate
     public void calcularPrecos() {
         BigDecimal totalCusto = getTotalCusto();
-        
         // precoSugerido = totalCusto * (1 + multiplicadorMargem)
         this.precoSugerido = totalCusto.multiply(BigDecimal.ONE.add(multiplicadorMargem));
-        
-        // precoCartao - assuming a 10% tax if not specified, or just a placeholder logic
-        // For now, I'll use 10% (1.1) as a placeholder for "taxa para pagamento em cartão"
-        this.precoCartao = this.precoSugerido.multiply(BigDecimal.valueOf(1.1));
+        // precoCartao = precoSugerido * (1 + taxaCartao)
+        BigDecimal taxa = taxaCartao != null ? taxaCartao : BigDecimal.valueOf(0.10);
+        this.precoCartao = this.precoSugerido.multiply(BigDecimal.ONE.add(taxa));
     }
 }

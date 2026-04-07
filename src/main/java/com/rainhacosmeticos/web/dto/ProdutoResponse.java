@@ -11,8 +11,6 @@ public record ProdutoResponse(
         @JsonProperty("descricao") String descricao,
         @JsonProperty("ean") String ean,
         @JsonProperty("preco") BigDecimal preco,
-        @JsonProperty("preco_custo") BigDecimal precoCusto,
-        @JsonProperty("margem_lucro") BigDecimal margemLucro,
         @JsonProperty("ativo") boolean ativo,
         @JsonProperty("categoria_id") UUID categoriaId,
         @JsonProperty("unidade_id") UUID unidadeId

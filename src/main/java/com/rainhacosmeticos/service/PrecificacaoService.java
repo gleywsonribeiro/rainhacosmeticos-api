@@ -5,13 +5,16 @@ import com.rainhacosmeticos.domain.model.ItemNotaDeCompra;
 import com.rainhacosmeticos.domain.model.Precificacao;
 import com.rainhacosmeticos.domain.model.Produto;
 import com.rainhacosmeticos.exception.RecursoNaoEncontradoException;
+import com.rainhacosmeticos.repository.FornecedorRepository;
 import com.rainhacosmeticos.repository.PrecificacaoRepository;
 import com.rainhacosmeticos.repository.ProdutoRepository;
+import com.rainhacosmeticos.web.dto.PrecificacaoManualRequest;
 import com.rainhacosmeticos.web.dto.PrecificacaoResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,12 +24,15 @@ public class PrecificacaoService {
 
     private final PrecificacaoRepository precificacaoRepository;
     private final ProdutoRepository produtoRepository;
+    private final FornecedorRepository fornecedorRepository;
 
     public PrecificacaoService(
             PrecificacaoRepository precificacaoRepository,
-            ProdutoRepository produtoRepository) {
+            ProdutoRepository produtoRepository,
+            FornecedorRepository fornecedorRepository) {
         this.precificacaoRepository = precificacaoRepository;
         this.produtoRepository = produtoRepository;
+        this.fornecedorRepository = fornecedorRepository;
     }
 
     /**
@@ -59,6 +65,45 @@ public class PrecificacaoService {
         produtoRepository.save(produto);
 
         return salva;
+    }
+
+    /**
+     * Cria uma precificação manual para um produto, sem necessidade de Nota de Compra.
+     * Útil para precificar produtos recém-cadastrados ou ajustar preços por outros motivos
+     * (reajuste de mercado, produto importado, etc.).
+     * A lógica de cálculo e atualização do Produto.preco é idêntica à automática.
+     */
+    @Transactional
+    public PrecificacaoResponse registrarManualmente(PrecificacaoManualRequest request) {
+        Produto produto = produtoRepository.findById(request.produtoId())
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Produto não encontrado."));
+
+        Fornecedor fornecedor = fornecedorRepository.findById(request.fornecedorId())
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Fornecedor não encontrado."));
+
+        Precificacao precificacao = Precificacao.builder()
+                .produto(produto)
+                .fornecedor(fornecedor)
+                .dataReferencia(request.dataReferencia() != null ? request.dataReferencia() : LocalDate.now())
+                .custo(request.custo())
+                .multiplicadorMargem(request.multiplicadorMargem())
+                .taxaCartao(request.taxaCartao() != null ? request.taxaCartao() : BigDecimal.valueOf(0.10))
+                .custoEmbalagem(request.custoEmbalagem() != null ? request.custoEmbalagem() : BigDecimal.ZERO)
+                .custoBrinde(request.custoBrinde() != null ? request.custoBrinde() : BigDecimal.ZERO)
+                .custoPapelaria(request.custoPapelaria() != null ? request.custoPapelaria() : BigDecimal.ZERO)
+                .outrosCustos(request.outrosCustos() != null ? request.outrosCustos() : BigDecimal.ZERO)
+                // precoSugerido e precoCartao serão calculados pelo @PrePersist
+                .precoSugerido(BigDecimal.ZERO)
+                .precoCartao(BigDecimal.ZERO)
+                .build();
+
+        Precificacao salva = precificacaoRepository.save(precificacao);
+
+        // Atualiza o preço de venda do produto com o precoSugerido recém-calculado
+        produto.setPreco(salva.getPrecoSugerido());
+        produtoRepository.save(produto);
+
+        return toResponse(salva);
     }
 
     /** Retorna o histórico completo de precificações de um produto, do mais recente ao mais antigo. */

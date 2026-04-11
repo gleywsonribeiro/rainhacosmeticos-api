@@ -1,7 +1,11 @@
 package com.rainhacosmeticos.web.controller;
 
 import com.rainhacosmeticos.service.PrecificacaoService;
+import com.rainhacosmeticos.web.dto.PrecificacaoManualRequest;
 import com.rainhacosmeticos.web.dto.PrecificacaoResponse;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +19,17 @@ public class PrecificacaoController {
 
     public PrecificacaoController(PrecificacaoService precificacaoService) {
         this.precificacaoService = precificacaoService;
+    }
+
+    /**
+     * Cria uma precificação manual para um produto, sem necessidade de Nota de Compra.
+     * Útil para precificar produtos recém-cadastrados ou ajustar preços em qualquer momento.
+     */
+    @PostMapping
+    public ResponseEntity<PrecificacaoResponse> registrarManualmente(
+            @Valid @RequestBody PrecificacaoManualRequest request) {
+        PrecificacaoResponse response = precificacaoService.registrarManualmente(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     /**

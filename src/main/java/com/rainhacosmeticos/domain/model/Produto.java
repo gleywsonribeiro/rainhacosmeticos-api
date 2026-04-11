@@ -41,6 +41,10 @@ public class Produto {
     @Builder.Default
     private boolean ativo = true;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer quantidadeEstoque = 0;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoria_id", nullable = false)
     private Categoria categoria;

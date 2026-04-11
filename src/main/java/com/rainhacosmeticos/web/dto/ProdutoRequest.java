@@ -11,6 +11,7 @@ public record ProdutoRequest(
         String descricao,
         String ean,
         @JsonProperty("ativo") Boolean ativo,
+        @JsonProperty("quantidade_estoque") Integer quantidadeEstoque,
         @NotNull @JsonProperty("categoria_id") UUID categoriaId,
         @NotNull @JsonProperty("unidade_id") UUID unidadeId
 ) {

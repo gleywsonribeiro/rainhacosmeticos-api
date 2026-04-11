@@ -34,6 +34,7 @@ public class CategoriaService {
     public CategoriaResponse criar(CategoriaCreateRequest request) {
         Categoria categoria = Categoria.builder()
                 .nome(request.nome().trim())
+                .margemPadrao(request.margemPadrao() != null ? request.margemPadrao() : java.math.BigDecimal.valueOf(0.40))
                 .ativo(true)
                 .build();
         return toResponse(categoriaRepository.save(categoria));
@@ -67,6 +68,6 @@ public class CategoriaService {
     }
 
     private CategoriaResponse toResponse(Categoria c) {
-        return new CategoriaResponse(c.getId(), c.getNome(), c.isAtivo());
+        return new CategoriaResponse(c.getId(), c.getNome(), c.isAtivo(), c.getMargemPadrao());
     }
 }

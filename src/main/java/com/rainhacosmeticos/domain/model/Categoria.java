@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -26,4 +27,8 @@ public class Categoria {
     @Column(nullable = false)
     @Builder.Default
     private boolean ativo = true;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private BigDecimal margemPadrao = BigDecimal.valueOf(0.40);
 }

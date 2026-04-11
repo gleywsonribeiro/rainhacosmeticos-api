@@ -50,6 +50,7 @@ public class ProdutoService {
                 .ean(ean)
                 // preco inicia em ZERO; será atualizado ao processar a primeira Nota de Compra
                 .ativo(ativo)
+                .quantidadeEstoque(request.quantidadeEstoque() != null ? request.quantidadeEstoque() : 0)
                 .categoria(categoriaService.buscarEntidadeAtiva(request.categoriaId()))
                 .unidade(unidadeService.buscarEntidadeAtiva(request.unidadeId()))
                 .build();
@@ -68,6 +69,9 @@ public class ProdutoService {
         produto.setEan(ean);
         if (request.ativo() != null) {
             produto.setAtivo(request.ativo());
+        }
+        if (request.quantidadeEstoque() != null) {
+            produto.setQuantidadeEstoque(request.quantidadeEstoque());
         }
         produto.setCategoria(categoriaService.buscarEntidadeAtiva(request.categoriaId()));
         produto.setUnidade(unidadeService.buscarEntidadeAtiva(request.unidadeId()));
@@ -102,6 +106,7 @@ public class ProdutoService {
                 p.getEan(),
                 p.getPreco(),
                 p.isAtivo(),
+                p.getQuantidadeEstoque(),
                 p.getCategoria().getId(),
                 p.getUnidade().getId());
     }

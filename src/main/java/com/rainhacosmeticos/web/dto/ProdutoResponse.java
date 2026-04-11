@@ -12,6 +12,7 @@ public record ProdutoResponse(
         @JsonProperty("ean") String ean,
         @JsonProperty("preco") BigDecimal preco,
         @JsonProperty("ativo") boolean ativo,
+        @JsonProperty("quantidade_estoque") Integer quantidadeEstoque,
         @JsonProperty("categoria_id") UUID categoriaId,
         @JsonProperty("unidade_id") UUID unidadeId
 ) {

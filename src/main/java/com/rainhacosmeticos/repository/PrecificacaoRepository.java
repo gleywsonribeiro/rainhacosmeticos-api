@@ -14,6 +14,9 @@ public interface PrecificacaoRepository extends JpaRepository<Precificacao, UUID
     /** Busca todas as precificações de um produto, da mais recente para a mais antiga. */
     List<Precificacao> findByProduto_IdOrderByDataReferenciaDesc(UUID produtoId);
 
+    /** Busca a precificação mais recente de um produto. */
+    Optional<Precificacao> findTopByProduto_IdOrderByDataReferenciaDesc(UUID produtoId);
+
     /** Busca a precificação mais recente de um produto junto a um fornecedor específico. */
     Optional<Precificacao> findTopByProduto_IdAndFornecedor_IdOrderByDataReferenciaDesc(UUID produtoId, UUID fornecedorId);
 }

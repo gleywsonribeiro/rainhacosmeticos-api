@@ -1,12 +1,10 @@
 package com.rainhacosmeticos.service;
 
-import com.rainhacosmeticos.domain.model.Fornecedor;
-import com.rainhacosmeticos.domain.model.ItemNotaDeCompra;
-import com.rainhacosmeticos.domain.model.NotaDeCompra;
-import com.rainhacosmeticos.domain.model.Produto;
+import com.rainhacosmeticos.domain.model.*;
 import com.rainhacosmeticos.exception.RecursoNaoEncontradoException;
 import com.rainhacosmeticos.repository.FornecedorRepository;
 import com.rainhacosmeticos.repository.NotaDeCompraRepository;
+import com.rainhacosmeticos.repository.PrecificacaoRepository;
 import com.rainhacosmeticos.repository.ProdutoRepository;
 import com.rainhacosmeticos.web.dto.ItemNotaDeCompraRequest;
 import com.rainhacosmeticos.web.dto.ItemNotaDeCompraResponse;
@@ -23,20 +21,23 @@ import java.util.UUID;
 @Transactional(readOnly = true)
 public class NotaDeCompraService {
 
-    private final NotaDeCompraRepository notaDeCompraRepository;
-    private final FornecedorRepository fornecedorRepository;
     private final ProdutoRepository produtoRepository;
     private final PrecificacaoService precificacaoService;
+    private final PrecificacaoRepository precificacaoRepository;
+    private final NotaDeCompraRepository notaDeCompraRepository;
+    private final FornecedorRepository fornecedorRepository;
 
     public NotaDeCompraService(
             NotaDeCompraRepository notaDeCompraRepository,
             FornecedorRepository fornecedorRepository,
             ProdutoRepository produtoRepository,
-            PrecificacaoService precificacaoService) {
+            PrecificacaoService precificacaoService,
+            PrecificacaoRepository precificacaoRepository) {
         this.notaDeCompraRepository = notaDeCompraRepository;
         this.fornecedorRepository = fornecedorRepository;
         this.produtoRepository = produtoRepository;
         this.precificacaoService = precificacaoService;
+        this.precificacaoRepository = precificacaoRepository;
     }
 
     public List<NotaDeCompraResponse> listar() {
@@ -81,18 +82,34 @@ public class NotaDeCompraService {
                     .orElseThrow(() -> new RecursoNaoEncontradoException(
                             "Produto não encontrado: " + itemReq.produtoId()));
 
+            // Lógica de Automação de Margem:
+            // 1. Busca do Request
+            // 2. Senão, busca do Histórico (última precificação)
+            // 3. Senão, busca da Categoria
+            // 4. Senão, padrão global 0.40
+            BigDecimal margem = itemReq.multiplicadorMargem();
+            if (margem == null) {
+                margem = precificacaoRepository.findTopByProduto_IdOrderByDataReferenciaDesc(produto.getId())
+                        .map(Precificacao::getMultiplicadorMargem)
+                        .orElseGet(() -> produto.getCategoria().getMargemPadrao());
+            }
+
             ItemNotaDeCompra item = ItemNotaDeCompra.builder()
                     .notaDeCompra(nota)
                     .produto(produto)
                     .quantidade(itemReq.quantidade())
                     .custoUnitario(itemReq.custoUnitario())
-                    .multiplicadorMargem(itemReq.multiplicadorMargem())
+                    .multiplicadorMargem(margem)
                     .taxaCartao(itemReq.taxaCartao() != null ? itemReq.taxaCartao() : BigDecimal.valueOf(0.10))
                     .custoEmbalagem(itemReq.custoEmbalagem() != null ? itemReq.custoEmbalagem() : BigDecimal.ZERO)
                     .custoBrinde(itemReq.custoBrinde() != null ? itemReq.custoBrinde() : BigDecimal.ZERO)
                     .custoPapelaria(itemReq.custoPapelaria() != null ? itemReq.custoPapelaria() : BigDecimal.ZERO)
                     .outrosCustos(itemReq.outrosCustos() != null ? itemReq.outrosCustos() : BigDecimal.ZERO)
                     .build();
+
+            // Atualiza Estoque
+            produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() + itemReq.quantidade());
+            produtoRepository.save(produto);
 
             nota.getItens().add(item);
         }

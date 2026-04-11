@@ -20,7 +20,9 @@ public record ItemNotaDeCompraRequest(
          * Fator de margem de lucro. Ex: 0.40 = 40% de margem.
          * precoSugerido = (custoUnitario + custosExtras) * (1 + multiplicadorMargem)
          */
-        @NotNull @DecimalMin("0.0") @JsonProperty("multiplicador_margem") BigDecimal multiplicadorMargem,
+        @DecimalMin("0.0")
+        @JsonProperty("multiplicador_margem")
+        BigDecimal multiplicadorMargem,
 
         /**
          * Taxa adicional para pagamento em cartão. Ex: 0.10 = 10%.
